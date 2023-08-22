@@ -2,6 +2,16 @@ require("dotenv").config();
 const { SlashCommandBuilder } = require("discord.js");
 const axios = require("axios");
 
+function titleCase(str) {
+  return str
+    .toLowerCase()
+    .split(" ")
+    .map(function (word) {
+      return word.charAt(0).toUpperCase() + word.slice(1);
+    })
+    .join(" ");
+}
+
 module.exports = {
   data: new SlashCommandBuilder()
     .setName("weather")
@@ -15,11 +25,12 @@ module.exports = {
     try {
       const api_key = process.env.WEATHER_API_KEY;
       const location = interaction.options.getString("location");
+      const city = location.charAt(0).toUpperCase() + location.slice(1);
       const response = await axios.get(
         `http://api.weatherapi.com/v1/current.json?key=${api_key}&q=${location}&aqi=no`
       );
       interaction.reply(
-        `The current weather in ${location} is ${response.data.current.condition.text} with a temperature of ${response.data.current.temp_c} degrees celsius`
+        `The current weather in ${city} is ${response.data.current.condition.text} with a temperature of ${response.data.current.temp_c} degrees celsius`
       );
     } catch (error) {
       console.error(error);
