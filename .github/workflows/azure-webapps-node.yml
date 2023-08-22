@@ -54,9 +54,6 @@ jobs:
           name: node-app
           path: .
 
-      - name: Azure Login
-        uses: Azure/login@v1
-
   deploy:
     permissions:
       contents: none

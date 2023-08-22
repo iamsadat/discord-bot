@@ -1,16 +1,31 @@
+require("dotenv").config();
 const { SlashCommandBuilder } = require("discord.js");
-const fetchRandomGif = require("../../api/giphy.js");
+
+const axios = require("axios");
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName("gifs")
-    .setDescription("Sends a random gif"),
+    .setName("gif")
+    .setDescription("Sends a random gif")
+    .addStringOption((option) =>
+      option.setName("tag").setDescription("The tag to search for")
+    ),
   async execute(interaction) {
-    const gifUrl = await fetchRandomGif();
-    if (gifUrl) {
-      await interaction.reply({ content: gifUrl });
-    } else {
-      await interaction.reply("Sorry, something went wrong.");
+    try {
+      const api_key = process.env.GIPHY_API_KEY;
+      const tag = interaction.options.getString("tag") || "random";
+      const response = await axios.get(
+        `http://api.giphy.com/v1/gifs/random?tag=${encodeURIComponent(
+          tag
+        )}&api_key=${api_key}`
+      );
+
+      const gifUrl = response.data.data.images.original.url;
+      interaction.channel.send(gifUrl);
+    } catch (error) {
+      console.error(error);
+      interaction.reply("There was an error fetching a gif");
+      return null;
     }
   },
 };
