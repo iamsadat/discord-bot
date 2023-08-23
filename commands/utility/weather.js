@@ -2,16 +2,6 @@ require("dotenv").config();
 const { SlashCommandBuilder } = require("discord.js");
 const axios = require("axios");
 
-function titleCase(str) {
-  return str
-    .toLowerCase()
-    .split(" ")
-    .map(function (word) {
-      return word.charAt(0).toUpperCase() + word.slice(1);
-    })
-    .join(" ");
-}
-
 module.exports = {
   data: new SlashCommandBuilder()
     .setName("weather")
